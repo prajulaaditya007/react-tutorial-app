@@ -1,27 +1,63 @@
-# React + TypeScript + Vite
+**Introduction**:
+When working on projects with multiple contributors, it's essential to maintain consistency and track version changes accurately. In this blog, we'll explore how to create a pre-commit hook using Python that checks if the version in the `package.json` file has been modified before allowing a commit. This simple step can prevent accidental version changes and ensure a smooth development process.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Prerequisites**:
+- A Git repository with a `package.json` file containing a `"version"` field.
 
-Currently, two official plugins are available:
+Step 1: Creating the Python Script
+First, let's create a Python script that will perform the version check. Save the following code as `pre-commit.py`:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```python
+import json
+import os
+import sys
 
-## Expanding the ESLint configuration
+def read_package_version():
+    with open("package.json") as f:
+        data = json.load(f)
+    return data.get("version")
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+def check_version_change():
+    old_version = read_package_version()
+    new_version = os.popen("git show HEAD:package.json").read()
+    new_version = json.loads(new_version).get("version")
 
-- Configure the top-level `parserOptions` property like this:
+    if old_version != new_version:
+        return True
+    else:
+        print("No changes to package version. Commit aborted.")
+        return False
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+if __name__ == "__main__":
+    if not check_version_change():
+        sys.exit(1)
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Step 2: Making the Script Executable
+Before we use the script as a Git hook, we need to make it executable. Open your terminal and run:
+
+```bash
+chmod +x pre-commit.py
+```
+
+Step 3: Setting Up the Hook
+Now, let's create a symbolic link from the script to the Git's `pre-commit` hook:
+
+```bash
+ln -s ../../pre-commit.py .git/hooks/pre-commit
+```
+
+Step 4: Explanation of the Script
+Now that we have the script set up as a pre-commit hook, let's understand how it works:
+
+- The `read_package_version()` function reads the `"version"` field from the `package.json` file.
+
+- The `check_version_change()` function performs the version comparison. It first fetches the current version from the staged version of `package.json` using `git show HEAD:package.json`. It then compares it with the previous version from the latest commit. If the versions differ, it returns `True`, allowing the commit. Otherwise, it prints a message and returns `False`, aborting the commit.
+
+Step 5: Testing the Pre-Commit Hook
+Now, whenever you attempt to commit changes, the pre-commit hook will automatically execute. It will check if the version in `package.json` has been changed. If the version has been updated, the commit will proceed as usual. If there are no changes to the version, the commit will be aborted with the message "No changes to package version. Commit aborted."
+
+Conclusion:
+By implementing this simple pre-commit hook, you can ensure that version changes in your `package.json` file are tracked accurately. This prevents unintentional version changes and helps maintain a more organized development process within your team.
+
+Whenever you commit your code, if `package.json` is not staged for commit or even it is staged but the `"version"` is not changed. With this hook in place, you can confidently manage version changes in your project and improve collaboration among team members. Happy coding!

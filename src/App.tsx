@@ -13,6 +13,7 @@ const data = [
   { category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
   { category: "Vegetables", price: "$1", stocked: true, name: "Peas" },
   { category: "Vegetables", price: "$0.5", stocked: true, name: "Potato" },
+  { category: "Vegetables", price: "$3", stocked: false, name: "Tomato" },
 ];
 
 const App: React.FC = () => {

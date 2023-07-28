@@ -2,6 +2,7 @@
 When working on projects with multiple contributors, it's essential to maintain consistency and track version changes accurately. In this blog, we'll explore how to create a pre-commit hook using Python that checks if the version in the `package.json` file has been modified before allowing a commit. This simple step can prevent accidental version changes and ensure a smooth development process.
 
 **Prerequisites**:
+
 - A Git repository with a `package.json` file containing a `"version"` field.
 
 Step 1: Creating the Python Script
@@ -40,12 +41,25 @@ Before we use the script as a Git hook, we need to make it executable. Open your
 chmod +x pre-commit.py
 ```
 
+Setting the execution permission for the script using `chmod +x pre-commit.py` is specific to Linux/macOS. However, on Windows, this step is not necessary as Windows doesn't use execute permissions like Unix-based systems.
+
 Step 3: Setting Up the Hook
 Now, let's create a symbolic link from the script to the Git's `pre-commit` hook:
 
 ```bash
 ln -s ../../pre-commit.py .git/hooks/pre-commit
 ```
+
+Creating Symbolic Link:
+The command to create a symbolic link to the pre-commit script using `ln -s ../../pre-commit.py .git/hooks/pre-commit` is specific to Linux/macOS. On Windows, you can use the mklink command to achieve the same result.
+
+For Windows, you can create a symbolic link using the following command:
+
+```cmd
+mklink .git\hooks\pre-commit ..\..\pre-commit.py
+```
+
+The Git commands used in the Python script, such as git show HEAD:package.json, are cross-platform and should work consistently on both Windows and Linux.
 
 Step 4: Explanation of the Script
 Now that we have the script set up as a pre-commit hook, let's understand how it works:

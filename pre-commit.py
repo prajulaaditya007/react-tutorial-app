@@ -13,9 +13,9 @@ def read_package_version():
 
 def check_version_change():
     old_version = read_package_version()
-    os.system("git add package.json")
-    os.system("git diff --cached --exit-code")
-    new_version = read_package_version()
+    new_version = os.popen("git show HEAD:package.json").read()
+    new_version = json.loads(new_version).get("version")
+
     if old_version != new_version:
         return True
     else:

@@ -8,9 +8,11 @@ const data = [
   { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
   { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
   { category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
+  { category: "Fruits", price: "$3", stocked: true, name: "Pineapple" },
   { category: "Vegetables", price: "$2", stocked: true, name: "Spinach" },
   { category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
   { category: "Vegetables", price: "$1", stocked: true, name: "Peas" },
+  { category: "Vegetables", price: "$0.5", stocked: true, name: "Potato" },
 ];
 
 const App: React.FC = () => {
